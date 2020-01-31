@@ -1,0 +1,88 @@
+﻿@page "/"
+@inject SingletonService singleton
+@inject IRepository repository
+<!--
+
+<p> Hello @name</p>
+<p>Singleton count: @singleton.Value</p>
+
+<p> Hi @StringUtilities.CustomToUpper(name)</p>
+
+<p> Let's add 2 + 2 = @( 2 + 2 )</p>
+<p>
+    <button @onclick="@( () => Console.WriteLine("I've have been clicked"))">Click</button>
+</p>
+<p>
+    <button @onclick="@WriteLog">Click Me</button>
+</p>
+
+-->
+<h3>Movie</h3>
+@* <p><b>Title:</b> @spiderman.Title</p>
+    <p><b>Release Date:</b> @spiderman.ReleaseDate.ToString("dd MMM yyyy")</p>
+
+    @foreach (Movie movie in movies)
+    {
+        <div>
+            <p><b>Title:</b> @movie.Title</p>
+            <p><b>Release Date:</b> @movie.ReleaseDate</p>
+        </div>
+    }
+*@
+
+<MoviesList Movies="movies">
+
+</MoviesList>
+
+<CustomTypeahead SearchMethod="SearchMethod">
+    <ResultTemplate>
+        @context
+    </ResultTemplate>
+</CustomTypeahead>
+
+<!--
+
+<button @onclick="AddNewMovie">Add new movie</button>
+-->
+
+@code{
+   // string name = "Abhilash";
+
+    private List<Movie> movies;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(3000);
+
+        movies = repository.GetMovies();
+    }
+
+    private async Task<IEnumerable<string>> SearchMethod(string searchText)
+    {
+        await Task.Delay(2000);
+        if(searchText == "test") { return Enumerable.Empty<string>();  }
+        return new List<string>() {  "Abhilash", "Basya", "Chetya" };
+
+    }
+
+    Movie spiderman = new Movie()
+    {
+        Title = "Spider Man: Far From Home",
+        ReleaseDate = new DateTime(2019, 7, 2)
+    };
+
+    void WriteLog()
+    {
+        Console.WriteLine("I've been clicked from method");
+    }
+
+    private void AddNewMovie()
+    {
+        movies.Add(new Movie()
+        {
+            Title = "Thor",
+            ReleaseDate = DateTime.Today
+
+        });
+    }
+}
